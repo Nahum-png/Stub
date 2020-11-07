@@ -1,8 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: org.example.EchoServiceTest
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.664 s <<< FAILURE! - in org.example.EchoServiceTest
-givenValidRequestAndResponse_whenEcho_thenTrueIsResponded  Time elapsed: 0.649 s  <<< FAILURE!
-org.opentest4j.AssertionFailedError: expected: <true> but was: <false>
-	at org.example.EchoServiceTest.givenValidRequestAndResponse_whenEcho_thenTrueIsResponded(EchoServiceTest.java:21)
-
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.301 s - in org.example.EchoServiceTest

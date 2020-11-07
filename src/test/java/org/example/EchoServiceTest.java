@@ -1,15 +1,14 @@
 package org.example;
 
-import org.example.stubs.TestInputStream;
-import org.example.stubs.TestOutputStream;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.module.InvalidModuleDescriptorException;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 class EchoServiceTest {
     ///TDD -> Test Driven Development
@@ -18,39 +17,55 @@ class EchoServiceTest {
         ///Given
         EchoService echoService = new EchoService();
         String request = "Hello There";
+        byte []messageInBytes = new byte[]{
+          'H', 'e', 'l', 'l', 'o', ' ', 'T', 'h', 'e', 'r','e'
+        };
 
-        TestOutputStream outputStream = new TestOutputStream();
-        InputStream inputStream = new TestInputStream(request);
+
+        OutputStream outputStream = mock(OutputStream.class);
+        InputStream inputStream = mock(InputStream.class);
+
+        Mockito.when(inputStream.readAllBytes()).thenReturn(messageInBytes);
 
         ///When
         boolean response = echoService.sendEchoMessage(request, outputStream, inputStream);
 
         ///Then
-        String messageSent = outputStream.getMessageSent();
-
-        assertEquals(request, messageSent);
+        verify(outputStream).write(messageInBytes);
+        verify(inputStream).readAllBytes();
+        verifyNoMoreInteractions(inputStream,outputStream);
 
         assertTrue(response);
     }
 
-    @Test
-    public void givenValidRequestAndWrongResponse_whenEcho_thenFalseIsResponded() throws IOException {
-        ///Given
-        EchoService echoService = new EchoService();
-        String request = "Hello There";
+   @Test
+   public void givenValidRequestAndWrongResponse_whenEcho_thenFalseIsResponded() throws IOException {
+       ///Given
+       EchoService echoService = new EchoService();
+       String request = "Hello There";
 
-        TestOutputStream outputStream = new TestOutputStream();
-        InputStream inputStream = new TestInputStream("Otra Cosa");
+       byte []messageResponse = new byte[]{   ///Wrong Request
+               'H', 'e', 'l', 'l', 'o', ' ', 'T', 'h', 'e', 'r','e', 'e'
+       };
 
-        ///When
-        boolean response = echoService.sendEchoMessage(request, outputStream, inputStream);
+       byte []messageRequest = new byte[]{
+               'H', 'e', 'l', 'l', 'o', ' ', 'T', 'h', 'e', 'r','e'
+       };
 
-        ///Then
-        String messageSent = outputStream.getMessageSent();
+       OutputStream outputStream = mock(OutputStream.class);
+       InputStream inputStream = mock(InputStream.class);
 
-        assertEquals(request, messageSent);
+       when(inputStream.readAllBytes()).thenReturn(messageResponse);
 
-        assertFalse(response);
-    }
+       ///When
+       boolean response = echoService.sendEchoMessage(request, outputStream, inputStream);
+
+       ///Then
+      verify(outputStream).write(messageRequest);
+      verify(inputStream).readAllBytes();
+      verifyNoMoreInteractions(inputStream,outputStream);
+
+       assertFalse(response);
+   }
 
 }
